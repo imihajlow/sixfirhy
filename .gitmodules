@@ -1,0 +1,3 @@
+[submodule "PlistCpp"]
+	path = PlistCpp
+	url = https://github.com/animetrics/PlistCpp.git

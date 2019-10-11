@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ImgView.qml</file>
+        <file>TagDisplay.qml</file>
+    </qresource>
+</RCC>
