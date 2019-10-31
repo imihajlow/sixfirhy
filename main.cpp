@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "tagprovider.h"
+#include "argsprovider.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,10 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     qmlRegisterType<TagProvider>("com.example", 1, 0, "TagProvider");
+    qmlRegisterSingletonType<ArgsProvider>("com.example", 1, 0, "ArgsProvider", [](QQmlEngine *, QJSEngine *) -> QObject * {
+        auto *o = new ArgsProvider;
+        return o;
+    });
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;

@@ -8,18 +8,22 @@ Rectangle {
     id: root
     focus: true
     color: "black"
+    state: "user"
 
-    property alias folder: folderModel.folder
+    property string folder: "/"
     property int index: 0
     property url currentFile: {
-        if (folderModel.count > 0) {
-            var boundedIndex = Math.min(index, folderModel.count - 1);
-            return folderModel.get(boundedIndex, "fileURL");
+        if (modelCount() > 0) {
+            var boundedIndex = Math.min(index, modelCount() - 1);
+            return getFileUrl(boundedIndex);
         } else {
             return "";
         }
     }
     property bool fit: true
+
+    property int imageX: mouse2img(mouseArea.mouseX, root.width, image.sourceSize.width)
+    property int imageY: mouse2img(mouseArea.mouseY, root.height, image.sourceSize.height)
 
     function mouse2img(mouseX, windowW, imgW) {
         if (imgW > windowW)
@@ -32,8 +36,43 @@ Rectangle {
         }
     }
 
-    property int imageX: mouse2img(mouseArea.mouseX, root.width, image.sourceSize.width)
-    property int imageY: mouse2img(mouseArea.mouseY, root.height, image.sourceSize.height)
+    function modelCount() {
+        if (root.state === "files") {
+            return ArgsProvider.files.length;
+        } else {
+            return folderModel.count;
+        }
+    }
+
+    function getFileUrl(index) {
+        if (root.state === "files") {
+            return "file://" + encodeURIComponent(ArgsProvider.files[index]);
+        } else {
+            return folderModel.get(index, "fileURL");
+        }
+    }
+
+    function nextImage(inc) {
+        var newIndex = index + inc;
+        index = Math.max(0, Math.min(modelCount() - 1, newIndex));
+    }
+
+    function prevImage(inc) {
+        if (index >= folderModel.count) {
+            index = Math.max(0, modelCount() - 1 - inc);
+        } else if (index > 0) {
+            var newIndex = index - inc;
+            index = Math.max(0, newIndex);
+        }
+    }
+
+    function lastImage() {
+        index = Math.max(0, modelCount() - 1);
+    }
+
+    function firstImage() {
+        index = 0;
+    }
 
     FolderListModel {
         id: folderModel
@@ -41,7 +80,7 @@ Rectangle {
         nameFilters: ["*.jpg", "*.png", "*.jpeg", "*.bmp", "*.tiff", "*.svg"]
         showOnlyReadable: true
         showDirs: false
-        folder: dialog.folder
+        folder: "file://" + encodeURIComponent(root.folder)
         onFolderChanged: {
             root.index = 0;
         }
@@ -51,6 +90,10 @@ Rectangle {
         id: dialog
         folder: shortcuts.pictures
         selectFolder: true
+        onAccepted: {
+            root.folder = folder;
+            root.state = "user";
+        }
     }
 
     MouseArea {
@@ -142,28 +185,18 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        dialog.open();
-    }
-
-    function nextImage(inc) {
-        var newIndex = index + inc;
-        index = Math.max(0, Math.min(folderModel.count - 1, newIndex));
-    }
-
-    function prevImage(inc) {
-        if (index >= folderModel.count) {
-            index = Math.max(0, folderModel.count - 1 - inc);
-        } else if (index > 0) {
-            var newIndex = index - inc;
-            index = Math.max(0, newIndex);
+        switch (ArgsProvider.mode) {
+        default:
+        case ArgsProvider.Empty:
+            dialog.open();
+            break;
+        case ArgsProvider.Folder:
+            root.state = "folder";
+            root.folder = ArgsProvider.folder;
+            break;
+        case ArgsProvider.Files:
+            root.state = "files";
+            break;
         }
-    }
-
-    function lastImage() {
-        index = Math.max(0, folderModel.count - 1);
-    }
-
-    function firstImage() {
-        index = 0;
     }
 }
