@@ -2,37 +2,36 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QUrl>
+#include <QDebug>
 
 ArgsProvider::ArgsProvider(QObject *parent) :
     QObject(parent),
-    mode(Empty)
+    touched(false)
 {
-    auto args = QCoreApplication::arguments();
-    if (args.size() <= 1) {
-        mode = Empty;
-    } else {
-        for (int i = 1; i < args.size(); ++i) {
-            QFileInfo fi(args.at(i));
-            if (fi.isDir() && mode == Empty) {
-                folder = args.at(i);
-                mode = Folder;
-                break;
-            } else if (fi.exists()) {
-                mode = Files;
-                files.append(args.at(i));
-            }
-        }
-    }
-}
-
-ArgsProvider::Mode ArgsProvider::getMode() const {
-    return mode;
-}
-
-QString ArgsProvider::getFolder() const {
-    return folder;
 }
 
 QVariantList ArgsProvider::getFiles() const {
     return files;
+}
+
+void ArgsProvider::clearFiles() {
+    files.clear();
+    emit filesChanged();
+}
+
+void ArgsProvider::handleFileOpenEvent(QUrl url) {
+    if (touched) {
+        files.clear();
+    }
+    files.append(url);
+    emit filesChanged();
+    if (touched) {
+        touched = false;
+        emit newList();
+    }
+}
+
+void ArgsProvider::touch() {
+    touched = true;
 }

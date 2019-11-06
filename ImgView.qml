@@ -46,19 +46,21 @@ Rectangle {
 
     function getFileUrl(index) {
         if (root.state === "files") {
-            return "file://" + encodeURIComponent(ArgsProvider.files[index]);
+            return ArgsProvider.files[index];
         } else {
             return folderModel.get(index, "fileURL");
         }
     }
 
     function nextImage(inc) {
+        ArgsProvider.touch();
         var newIndex = index + inc;
         index = Math.max(0, Math.min(modelCount() - 1, newIndex));
     }
 
     function prevImage(inc) {
-        if (index >= folderModel.count) {
+        ArgsProvider.touch();
+        if (index >= modelCount()) {
             index = Math.max(0, modelCount() - 1 - inc);
         } else if (index > 0) {
             var newIndex = index - inc;
@@ -67,10 +69,12 @@ Rectangle {
     }
 
     function lastImage() {
+        ArgsProvider.touch();
         index = Math.max(0, modelCount() - 1);
     }
 
     function firstImage() {
+        ArgsProvider.touch();
         index = 0;
     }
 
@@ -91,6 +95,7 @@ Rectangle {
         folder: shortcuts.pictures
         selectFolder: true
         onAccepted: {
+            ArgsProvider.clearFiles();
             root.folder = folder;
             root.state = "user";
         }
@@ -184,19 +189,17 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
-        switch (ArgsProvider.mode) {
-        default:
-        case ArgsProvider.Empty:
-            dialog.open();
-            break;
-        case ArgsProvider.Folder:
-            root.state = "folder";
-            root.folder = ArgsProvider.folder;
-            break;
-        case ArgsProvider.Files:
-            root.state = "files";
-            break;
+    Connections {
+        target: ArgsProvider
+        onFilesChanged: {
+            if (ArgsProvider.files.length > 0) {
+                root.state = "files";
+                dialog.close();
+            }
+        }
+
+        onNewList: {
+            index = 0;
         }
     }
 }

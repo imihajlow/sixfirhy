@@ -7,9 +7,11 @@ SOURCES += \
         main.cpp \
         tagprovider.cpp \
         PlistCpp/src/pugixml.cpp PlistCpp/src/PList.cpp PlistCpp/src/PlistDate.cpp \
-    argsprovider.cpp
+    argsprovider.cpp \
+    macapplication.cpp
 HEADERS += tagprovider.h \
-    argsprovider.h
+    argsprovider.h \
+    macapplication.h
 INCLUDEPATH += "PlistCpp/include" "PlistCpp/src"
 RESOURCES += qml.qrc
 

@@ -8,25 +8,21 @@
 class ArgsProvider : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Mode mode READ getMode CONSTANT)
-    Q_PROPERTY(QString folder READ getFolder CONSTANT)
-    Q_PROPERTY(QVariantList files READ getFiles CONSTANT)
+    Q_PROPERTY(QVariantList files READ getFiles NOTIFY filesChanged)
 public:
-    enum Mode {
-        Empty,
-        Folder,
-        Files
-    };
-    Q_ENUM(Mode)
     explicit ArgsProvider(QObject *parent = nullptr);
 
-    Mode getMode() const;
-    QString getFolder() const;
     QVariantList getFiles() const;
+    Q_INVOKABLE void clearFiles();
+    Q_INVOKABLE void touch();
+
+    void handleFileOpenEvent(QUrl url);
+signals:
+    void filesChanged();
+    void newList();
 private:
-    Mode mode;
-    QString folder;
     QVariantList files;
+    bool touched;
 };
 
 #endif // ARGSPROVIDER_H

@@ -1,19 +1,18 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "tagprovider.h"
-#include "argsprovider.h"
+#include "macapplication.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    MacApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
     qmlRegisterType<TagProvider>("com.example", 1, 0, "TagProvider");
     qmlRegisterSingletonType<ArgsProvider>("com.example", 1, 0, "ArgsProvider", [](QQmlEngine *, QJSEngine *) -> QObject * {
-        auto *o = new ArgsProvider;
-        return o;
+        return MacApplication::getArgsProvider();
     });
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
