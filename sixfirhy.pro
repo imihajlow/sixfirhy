@@ -1,6 +1,10 @@
 QT += quick
 CONFIG += c++17
 
+ICON = sixfirhy.icns
+
+QMAKE_INFO_PLIST = Info.plist
+
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
