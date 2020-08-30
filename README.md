@@ -16,20 +16,20 @@ After building use Qt's macdeployqt tool to include Qt frameworks into the app b
 # Usage
 
 Key bindings:
-    o                   open folder
-    right,space         next image
-    left,backspace      previous image
-    shift+right,
-        shift+space     skip 10 images forward
-    shift+left,
-        shift+backspace skip 10 images backward
-    home                first image
-    end                 last image
-    f                   toggle fit/original size
-    t                   toggle tags visible
-    o                   open folder
-    1-7                 toggle color tags
-    s                   toggle image smoothness
+* o                   open folder
+* right,space         next image
+* left,backspace      previous image
+* shift+right,
+    shift+space     skip 10 images forward
+* shift+left,
+    shift+backspace skip 10 images backward
+* home                first image
+* end                 last image
+* f                   toggle fit/original size
+* t                   toggle tags visible
+* o                   open folder
+* 1-7                 toggle color tags
+* s                   toggle image smoothness
 
 # Name
 
